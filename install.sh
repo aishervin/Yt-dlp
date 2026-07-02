@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# رنگ‌ها برای زیباتر شدن خروجی ترمینال
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -16,9 +17,6 @@ pkg update -y && pkg upgrade -y
 
 echo -e "${BLUE}\n[*] Installing Python and FFmpeg...${NC}"
 pkg install python ffmpeg -y
-
-echo -e "${BLUE}\n[*] Updating pip...${NC}"
-pip install --upgrade pip
 
 echo -e "${BLUE}\n[*] Installing/Upgrading yt-dlp...${NC}"
 pip install --upgrade yt-dlp
