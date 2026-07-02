@@ -2,245 +2,343 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>yt-dlp Command Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>yt-dlp Script Maker</title>
     <style>
         :root {
-            --bg-color: #0d1117;
-            --panel-bg: #161b22;
-            --primary: #00ff00;
-            --primary-dim: #008800;
-            --text-main: #c9d1d9;
-            --text-muted: #8b949e;
-            --border: #30363d;
+            --bg-dark: #09090b;
+            --surface: #18181b;
+            --primary: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+            --radius: 12px;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 600px;
-            background-color: var(--panel-bg);
+            max-width: 500px;
+            background-color: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: var(--radius);
             padding: 20px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-top: 2vh;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
 
-        h1 {
-            color: var(--primary);
+        .header {
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            text-shadow: 0 0 5px var(--primary-dim);
-            letter-spacing: 1px;
+            margin-bottom: 5px;
         }
 
-        .form-group {
-            margin-bottom: 15px;
+        .header h1 {
+            color: var(--text-main);
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header span {
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         label {
-            display: block;
-            margin-bottom: 5px;
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 2px;
         }
 
         input, select {
             width: 100%;
-            padding: 10px;
-            background-color: var(--bg-color);
+            min-height: 48px; /* Touch-friendly size */
+            padding: 0 14px;
+            background-color: var(--bg-dark);
             border: 1px solid var(--border);
-            color: var(--primary);
-            border-radius: 4px;
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 16px; /* Prevents iOS auto-zoom */
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.2s ease;
             direction: ltr;
+        }
+
+        select {
+            direction: rtl;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a1a1aa%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: left 14px center;
+            background-size: 12px auto;
         }
 
         input:focus, select:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
         }
 
-        .output-box {
-            margin-top: 25px;
+        .output-wrapper {
+            margin-top: 10px;
             background-color: #000;
-            border: 1px solid var(--primary-dim);
-            border-radius: 4px;
-            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
             position: relative;
         }
 
-        .output-box p {
+        .output-header {
+            background-color: #1f1f22;
+            padding: 8px 14px;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        code {
-            display: block;
+        .terminal-code {
+            padding: 16px;
             color: var(--primary);
-            word-wrap: break-word;
-            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
             direction: ltr;
             text-align: left;
-            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            user-select: all;
         }
 
         .btn-copy {
             width: 100%;
-            margin-top: 15px;
-            padding: 10px;
-            background-color: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-
-        .btn-copy:hover {
+            min-height: 52px;
             background-color: var(--primary);
             color: #000;
-            box-shadow: 0 0 10px var(--primary-dim);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .btn-copy:active {
+            transform: scale(0.98);
+        }
+
+        .btn-copy.success {
+            background-color: #059669;
+            color: white;
         }
 
         footer {
             margin-top: auto;
-            padding: 20px;
+            padding: 25px 0;
             text-align: center;
-            color: var(--text-muted);
             font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        footer b {
+            color: var(--primary);
+            letter-spacing: 1px;
         }
 
-        .brand {
-            color: var(--primary);
-            letter-spacing: 2px;
+        /* Toast Notification */
+        #toast {
+            visibility: hidden;
+            min-width: 200px;
+            background-color: var(--primary);
+            color: #000;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: fixed;
+            z-index: 1000;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>[ yt-dlp script generator ]</h1>
-        
-        <div class="form-group">
-            <label for="videoLink">آدرس ویدیو (URL):</label>
-            <input type="text" id="videoLink" placeholder="https://youtube.com/..." oninput="generateCommand()">
+    <div class="app-container">
+        <div class="header">
+            <h1>yt-dlp Generator</h1>
+            <span>Termux Auto-Script</span>
         </div>
 
-        <div class="form-group">
-            <label for="proxy">آدرس پراکسی (SOCKS5):</label>
-            <input type="text" id="proxy" value="127.0.0.1:10808" placeholder="127.0.0.1:10808" oninput="generateCommand()">
+        <div class="input-group">
+            <label>لینک ویدیو (URL)</label>
+            <input type="url" id="videoLink" placeholder="https://..." oninput="updateCommand()" autocomplete="off">
         </div>
 
-        <div class="form-group">
-            <label for="actionType">نوع عملیات:</label>
-            <select id="actionType" onchange="generateCommand()">
-                <option value="best">دانلود با بالاترین کیفیت (صدا و تصویر)</option>
-                <option value="audio">استخراج فقط صدا (فرمت MP3)</option>
-                <option value="list">نمایش لیست کیفیت‌های موجود (-F)</option>
-                <option value="custom">دانلود یک کیفیت خاص (نیاز به ID)</option>
+        <div class="input-group">
+            <label>پراکسی (SOCKS5/HTTP)</label>
+            <input type="text" id="proxy" value="127.0.0.1:10808" oninput="updateCommand()" autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <label>نوع عملیات</label>
+            <select id="actionType" onchange="updateCommand()">
+                <option value="best">دانلود بهترین کیفیت (صدا + تصویر)</option>
+                <option value="audio">فقط صدا (MP3 با بالاترین کیفیت)</option>
+                <option value="list">لیست کردن کیفیت‌ها (-F)</option>
+                <option value="custom">دانلود با شناسه کیفیت خاص (ID)</option>
             </select>
         </div>
 
-        <div class="form-group" id="customFormatGroup" style="display: none;">
-            <label for="formatId">شناسه کیفیت (Format ID):</label>
-            <input type="text" id="formatId" placeholder="مثلاً 136" oninput="generateCommand()">
+        <div class="input-group" id="customFormatGroup" style="display: none;">
+            <label>شناسه کیفیت (Format ID)</label>
+            <input type="text" id="formatId" placeholder="مثلاً: 136" oninput="updateCommand()" autocomplete="off">
         </div>
 
-        <div class="output-box">
-            <p>// کدی که باید در ترموکس اجرا کنید:</p>
-            <code id="outputCommand">yt-dlp --proxy "socks5://127.0.0.1:10808" "LINK"</code>
+        <div class="output-wrapper">
+            <div class="output-header">
+                <span>Termux Console</span>
+                <span>Bash</span>
+            </div>
+            <div class="terminal-code" id="commandOutput">yt-dlp --proxy "socks5://127.0.0.1:10808" "LINK"</div>
         </div>
-        
-        <button class="btn-copy" onclick="copyCode()">[ COPY COMMAND ]</button>
+
+        <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            کپی کردن دستور
+        </button>
     </div>
 
     <footer>
-        Exclusive <span class="brand">☬SHΞN™</span> made
+        Exclusive <b>☬SHΞN™</b> made
     </footer>
 
+    <div id="toast">دستور با موفقیت کپی شد! ✓</div>
+
     <script>
-        function generateCommand() {
+        function updateCommand() {
             const link = document.getElementById('videoLink').value.trim() || "LINK";
             let proxy = document.getElementById('proxy').value.trim();
             const action = document.getElementById('actionType').value;
             const formatId = document.getElementById('formatId').value.trim() || "ID";
             const customGroup = document.getElementById('customFormatGroup');
 
-            // Format Proxy
-            let proxyFlag = "";
+            // نمایش یا مخفی کردن فیلد ID
+            customGroup.style.display = (action === 'custom') ? 'flex' : 'none';
+
+            // تنظیم پراکسی
+            let proxyCmd = "";
             if (proxy) {
-                if (!proxy.startsWith("socks5://") && !proxy.startsWith("http://") && !proxy.startsWith("https://")) {
+                if (!proxy.includes("://")) {
                     proxy = "socks5://" + proxy;
                 }
-                proxyFlag = `--proxy "${proxy}" `;
+                proxyCmd = `--proxy "${proxy}" `;
             }
 
-            // Toggle Custom Format Input
-            customGroup.style.display = (action === 'custom') ? 'block' : 'none';
+            // تنظیم آپشن‌ها
+            let actionCmd = "";
+            if (action === 'audio') actionCmd = "-x --audio-format mp3 ";
+            else if (action === 'list') actionCmd = "-F ";
+            else if (action === 'custom') actionCmd = `-f ${formatId} `;
 
-            // Generate Action Flags
-            let actionFlag = "";
-            switch(action) {
-                case 'best':
-                    actionFlag = "";
-                    break;
-                case 'audio':
-                    actionFlag = "-x --audio-format mp3 ";
-                    break;
-                case 'list':
-                    actionFlag = "-F ";
-                    break;
-                case 'custom':
-                    actionFlag = `-f ${formatId} `;
-                    break;
+            // تولید خروجی نهایی
+            document.getElementById('commandOutput').innerText = `yt-dlp ${proxyCmd}${actionCmd}"${link}"`;
+        }
+
+        // سیستم کپی ضد-خطا (پشتیبانی از مرورگرهای داخلی مثل تلگرام)
+        function copyToClipboard() {
+            const textToCopy = document.getElementById('commandOutput').innerText;
+
+            // روش مدرن
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textToCopy).then(showSuccess);
+            } else {
+                // روش جایگزین (Fallback) برای مرورگرهای خاص
+                let textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-999999px";
+                textArea.style.top = "-999999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showSuccess();
+                } catch (err) {
+                    alert("خطا در کپی کردن. لطفاً دستی کپی کنید.");
+                }
+                textArea.remove();
             }
-
-            // Build Command
-            const finalCommand = `yt-dlp ${proxyFlag}${actionFlag}"${link}"`;
-            document.getElementById('outputCommand').innerText = finalCommand;
         }
 
-        function copyCode() {
-            const codeText = document.getElementById('outputCommand').innerText;
-            navigator.clipboard.writeText(codeText).then(() => {
-                const btn = document.querySelector('.btn-copy');
-                const originalText = btn.innerText;
-                btn.innerText = "[ COPIED! ]";
-                btn.style.backgroundColor = "var(--primary)";
-                btn.style.color = "#000";
-                
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.style.backgroundColor = "transparent";
-                    btn.style.color = "var(--primary)";
-                }, 2000);
-            });
+        function showSuccess() {
+            const btn = document.getElementById('copyBtn');
+            const toast = document.getElementById('toast');
+            
+            // تغییر ظاهر دکمه
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = 'کپی شد! ✓';
+            btn.classList.add('success');
+            
+            // نمایش توست
+            toast.className = "show";
+            
+            // بازگشت به حالت اولیه
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('success');
+                toast.className = toast.className.replace("show", "");
+            }, 2000);
         }
 
-        // Initialize default command on load
-        window.onload = generateCommand;
+        // مقداردهی اولیه
+        window.onload = updateCommand;
     </script>
-
 </body>
 </html>
