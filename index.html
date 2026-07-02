@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yt-dlp Command Generator</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --primary: #00ff00;
+            --primary-dim: #008800;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --border: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px var(--primary-dim);
+            letter-spacing: 1px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s;
+            direction: ltr;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .output-box {
+            margin-top: 25px;
+            background-color: #000;
+            border: 1px solid var(--primary-dim);
+            border-radius: 4px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .output-box p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        code {
+            display: block;
+            color: var(--primary);
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        .btn-copy {
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-copy:hover {
+            background-color: var(--primary);
+            color: #000;
+            box-shadow: 0 0 10px var(--primary-dim);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .brand {
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>[ yt-dlp script generator ]</h1>
+        
+        <div class="form-group">
+            <label for="videoLink">آدرس ویدیو (URL):</label>
+            <input type="text" id="videoLink" placeholder="https://youtube.com/..." oninput="generateCommand()">
+        </div>
+
+        <div class="form-group">
+            <label for="proxy">آدرس پراکسی (SOCKS5):</label>
+            <input type="text" id="proxy" value="127.0.0.1:10808" placeholder="127.0.0.1:10808" oninput="generateCommand()">
+        </div>
+
+        <div class="form-group">
+            <label for="actionType">نوع عملیات:</label>
+            <select id="actionType" onchange="generateCommand()">
+                <option value="best">دانلود با بالاترین کیفیت (صدا و تصویر)</option>
+                <option value="audio">استخراج فقط صدا (فرمت MP3)</option>
+                <option value="list">نمایش لیست کیفیت‌های موجود (-F)</option>
+                <option value="custom">دانلود یک کیفیت خاص (نیاز به ID)</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="customFormatGroup" style="display: none;">
+            <label for="formatId">شناسه کیفیت (Format ID):</label>
+            <input type="text" id="formatId" placeholder="مثلاً 136" oninput="generateCommand()">
+        </div>
+
+        <div class="output-box">
+            <p>// کدی که باید در ترموکس اجرا کنید:</p>
+            <code id="outputCommand">yt-dlp --proxy "socks5://127.0.0.1:10808" "LINK"</code>
+        </div>
+        
+        <button class="btn-copy" onclick="copyCode()">[ COPY COMMAND ]</button>
+    </div>
+
+    <footer>
+        Exclusive <span class="brand">☬SHΞN™</span> made
+    </footer>
+
+    <script>
+        function generateCommand() {
+            const link = document.getElementById('videoLink').value.trim() || "LINK";
+            let proxy = document.getElementById('proxy').value.trim();
+            const action = document.getElementById('actionType').value;
+            const formatId = document.getElementById('formatId').value.trim() || "ID";
+            const customGroup = document.getElementById('customFormatGroup');
+
+            // Format Proxy
+            let proxyFlag = "";
+            if (proxy) {
+                if (!proxy.startsWith("socks5://") && !proxy.startsWith("http://") && !proxy.startsWith("https://")) {
+                    proxy = "socks5://" + proxy;
+                }
+                proxyFlag = `--proxy "${proxy}" `;
+            }
+
+            // Toggle Custom Format Input
+            customGroup.style.display = (action === 'custom') ? 'block' : 'none';
+
+            // Generate Action Flags
+            let actionFlag = "";
+            switch(action) {
+                case 'best':
+                    actionFlag = "";
+                    break;
+                case 'audio':
+                    actionFlag = "-x --audio-format mp3 ";
+                    break;
+                case 'list':
+                    actionFlag = "-F ";
+                    break;
+                case 'custom':
+                    actionFlag = `-f ${formatId} `;
+                    break;
+            }
+
+            // Build Command
+            const finalCommand = `yt-dlp ${proxyFlag}${actionFlag}"${link}"`;
+            document.getElementById('outputCommand').innerText = finalCommand;
+        }
+
+        function copyCode() {
+            const codeText = document.getElementById('outputCommand').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.innerText;
+                btn.innerText = "[ COPIED! ]";
+                btn.style.backgroundColor = "var(--primary)";
+                btn.style.color = "#000";
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.backgroundColor = "transparent";
+                    btn.style.color = "var(--primary)";
+                }, 2000);
+            });
+        }
+
+        // Initialize default command on load
+        window.onload = generateCommand;
+    </script>
+
+</body>
+</html>
